@@ -442,7 +442,7 @@ ul.dont li::before{content:"✕"; position:absolute; left:0; top:1px; font-famil
   }
   .dialogue{
     padding:22px 14px 14px;
-    max-height:65vh; max-height:65svh;   /* never higher than 65% of the screen — the face stays clear */
+    max-height:55vh; max-height:55svh;   /* never higher than 55% of the screen — the face stays clear */
     backdrop-filter:none;   /* a backdrop-filter turns the box into a containing block */
   }
   .say{
