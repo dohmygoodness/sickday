@@ -356,10 +356,7 @@ body.talking .bg .type{opacity:1}
   content:"\201C"; position:absolute; left:10px; top:2px;
   font-family:var(--serif); font-size:30px; line-height:1; color:var(--green-d);
 }
-.tl .script::after{ /* match the 30px opener; zero line-height so it doesn't stretch the row */
-  content:"\201D"; font-family:var(--serif); color:var(--green-d);
-  font-size:30px; line-height:0; display:inline-block; transform:translateY(.3em); margin-left:2px;
-}
+/* pull-quote: the box does the quoting, the corner mark is ornament — no closer */
 .tl .why{margin:0; font-size:15px; color:#2f5340}
 
 /* odds */
