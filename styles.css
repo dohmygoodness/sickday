@@ -1,0 +1,466 @@
+/* ── Sick Day Clinic · VN-style UI ─────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap");
+
+:root{
+  --paper:#fbfcf9;
+  --paper-2:#eef4ec;
+  --ink:#08361c;
+  --green:#12a04a;
+  --green-d:#0b7136;
+  --green-l:#a6e0ba;
+  --mint:#dcefe2;
+  --ink-2:#456a55;   /* secondary text — 5.9:1 on paper */
+  --ink-3:#557661;   /* faintest text  — 4.9:1 on paper */
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --sans:"Space Grotesk",system-ui,sans-serif;
+  --serif:"Instrument Serif",Georgia,serif;
+  --shadow:8px 8px 0 rgba(8,54,28,.9);
+  /* portrait stage floor — the desk-front green from the gif (#04a75f), speckled
+     with thresholded turbulence so it reads as the same risograph texture */
+  --stage-green:#04a75f;
+  --speckle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='s' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.44' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 .98 0 0 0 0 .99 0 0 0 0 .95 5 5 5 0 -8.8'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23s)'/%3E%3C/svg%3E");
+}
+*{box-sizing:border-box}
+html,body{height:100%; overflow:hidden}
+body{
+  margin:0; background:#f7f8f4; color:var(--ink);
+  font:16px/1.5 var(--sans);
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit}
+[hidden]{display:none!important}
+::selection{background:var(--green-l)}
+
+/* ── background plate ── */
+.bg{
+  position:fixed; inset:0; z-index:0; background:#f7f8f4; overflow:hidden;
+}
+.bg img{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; object-position:center 22%;
+}
+/* blinking is the base layer; the typing gif fades in over it, so nothing dips to white */
+.bg .type{opacity:0; transition:opacity .6s ease}
+body.talking .bg .type{opacity:1}
+.bg::after{ /* vignette so the HUD pops */
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(120% 90% at 50% 30%, transparent 55%, rgba(8,54,28,.14) 100%);
+}
+.grain{
+  position:fixed; inset:0; pointer-events:none; z-index:60; opacity:.35; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23f)' opacity='.18'/%3E%3C/svg%3E");
+}
+
+/* ── HUD corners ── */
+.scene{
+  position:fixed; inset:0; z-index:10;
+  display:flex; flex-direction:column; justify-content:flex-end; align-items:center;
+  padding:16px clamp(12px,3vw,34px) 14px;
+}
+.plate{
+  position:absolute; top:16px; right:clamp(14px,3vw,36px); text-align:right; line-height:1.35;
+  font-family:var(--mono); letter-spacing:.14em; text-transform:uppercase;
+}
+.plate::after{
+  content:""; display:block; margin-top:6px; margin-left:auto; width:64px; height:3px;
+  background:repeating-linear-gradient(90deg,var(--green-d) 0 8px,transparent 8px 12px);
+}
+.plate-clinic{display:block; font-size:11px; font-weight:600; color:var(--green-d)}
+.plate-sub{display:block; font-size:9.5px; color:#679a7c}
+
+/* ── dialogue box ── */
+.dialogue{
+  position:relative; width:min(960px,100%);
+  background:rgba(251,252,249,.96); backdrop-filter:blur(3px);
+  border:3px solid var(--ink); border-radius:4px;
+  padding:30px clamp(18px,2.6vw,28px) 22px;
+  box-shadow:var(--shadow), inset 0 0 0 1.5px rgba(18,160,74,.25);
+  max-height:76vh; display:flex; flex-direction:column;
+  animation:rise .28s cubic-bezier(.2,.9,.3,1.2) both;
+}
+@keyframes rise{from{transform:translateY(18px); opacity:0}}
+
+.nametag{
+  position:absolute; top:-19px; left:18px; background:var(--ink); color:#fff;
+  padding:4px 18px 4px 14px; display:flex; gap:10px; align-items:baseline;
+  font-family:var(--mono); font-size:13px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+  clip-path:polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+  box-shadow:4px 4px 0 rgba(8,54,28,.35);
+}
+.nametag::before{content:"◆"; color:var(--green); font-size:10px; align-self:center}
+.nametag em{font-style:normal; font-weight:400; opacity:.7; font-size:10px; letter-spacing:.08em}
+
+.say{
+  margin:2px 0 16px; font-size:clamp(17px,1.45vw,21px); font-weight:500; line-height:1.55;
+  white-space:pre-line; min-height:3.2em; cursor:pointer;
+}
+.say.done::after{
+  content:"▼"; display:inline-block; margin-left:10px; font-size:.7em; color:var(--green);
+  animation:bob 1s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+/* ── options: numbered, game menu style ── */
+/* the option tray grows open with motion (0fr -> 1fr row trick) */
+.ui{
+  display:grid; grid-template-rows:0fr; overflow:hidden; min-height:0;
+  transition:grid-template-rows .42s cubic-bezier(.22,.9,.26,1.02);
+}
+.ui.open{grid-template-rows:1fr}
+.ui-inner{
+  min-height:0; overflow:auto; counter-reset:opt;
+  display:flex; flex-direction:column; gap:9px; padding:2px;
+}
+.ui.grid2 .ui-inner{display:grid; grid-template-columns:1fr 1fr; align-items:stretch}
+.opt{
+  counter-increment:opt; position:relative; text-align:left; cursor:pointer;
+  font-family:var(--sans); font-size:clamp(14px,1.2vw,16.5px); color:var(--ink);
+  background:var(--paper); border:2.5px solid var(--ink); border-radius:3px;
+  padding:11px 16px 11px 56px;
+  transition:transform .07s, background .1s, box-shadow .07s;
+  animation:fadeup .3s cubic-bezier(.2,.8,.3,1.15) both; animation-delay:calc(.12s + var(--i,0)*.07s);
+  box-shadow:3px 3px 0 rgba(8,54,28,.25);
+}
+@keyframes fadeup{from{opacity:0; transform:translateY(12px) scale(.98)}}
+.opt::before{ /* keycap number */
+  content:counter(opt); position:absolute; left:14px; top:50%; transform:translateY(-50%);
+  width:26px; height:26px; display:grid; place-items:center;
+  font-family:var(--mono); font-size:13px; font-weight:600;
+  background:var(--mint); border:2px solid var(--ink); border-radius:5px;
+  box-shadow:0 2px 0 var(--ink);
+}
+.opt:hover,.opt:focus-visible{
+  background:var(--green-l); transform:translate(3px,-1px);
+  box-shadow:5px 5px 0 rgba(8,54,28,.45); outline:none;
+}
+.opt:hover::before,.opt:focus-visible::before{background:var(--green); color:#fff}
+.opt:active{transform:translate(4px,2px); box-shadow:1px 1px 0 rgba(8,54,28,.45)}
+.opt b{display:block; font-weight:600; letter-spacing:.01em}
+.opt small{display:block; opacity:.62; font-size:12.5px; margin-top:1px; font-weight:400}
+
+.row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+/* the consult row: dialogue centred alone; while picking, the calendar joins it on the right.
+   Flex does the layout — the keyframes only fake the motion between the two states. */
+.consult{width:100%; display:flex; justify-content:center; align-items:flex-end; gap:22px; min-width:0}
+.calpop{flex:0 0 360px; z-index:20}
+.scene.picking .dialogue{
+  width:min(960px, calc(100% - 382px));                    /* leave room for card + gap */
+  animation:shove .5s cubic-bezier(.2,.85,.3,1.05) both;   /* slide left from centre */
+}
+.scene.picking .calpop .cal{animation:calup .55s cubic-bezier(.2,.85,.3,1.08) .08s both}
+.scene.unpick .dialogue{animation:shoveback .5s cubic-bezier(.2,.85,.3,1.05) both}  /* and back again */
+@keyframes shove{from{transform:translateX(191px)}}        /* 191 = (card 360 + gap 22) / 2 */
+@keyframes shoveback{from{transform:translateX(-191px)}}
+@keyframes calup{from{transform:translateY(calc(100% + 90px)); opacity:0}}
+
+/* ── calendar ── */
+.cal{
+  width:min(360px,100%); background:var(--paper); border:2.5px solid var(--ink);
+  border-radius:3px; padding:14px; box-shadow:4px 4px 0 rgba(8,54,28,.28);
+  animation:fadeup .3s cubic-bezier(.2,.8,.3,1.15) both; animation-delay:.12s;
+}
+.cal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px}
+.cal-title{font-family:var(--mono); font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase}
+.cal-nav{
+  width:30px; height:30px; display:grid; place-items:center; cursor:pointer;
+  background:var(--mint); border:2px solid var(--ink); border-radius:5px;
+  font-size:16px; line-height:1; box-shadow:0 2px 0 var(--ink);
+  transition:background .1s, transform .07s, box-shadow .07s;
+}
+.cal-nav:hover:not(:disabled){background:var(--green); color:#fff}
+.cal-nav:active:not(:disabled){transform:translateY(2px); box-shadow:0 0 0 var(--ink)}
+.cal-nav:disabled{opacity:.25; cursor:default}
+.cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:4px}
+.cal-dow{
+  font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:.1em;
+  color:#679a7c; text-align:center; padding:2px 0 4px;
+}
+.cal-day{
+  height:31px; display:grid; place-items:center; cursor:pointer;
+  font-family:var(--mono); font-size:12.5px; font-weight:500; color:var(--ink);
+  background:var(--paper-2); border:2px solid transparent; border-radius:5px;
+  transition:background .08s, border-color .08s, transform .06s;
+}
+.cal-day:hover:not(:disabled){background:var(--green-l); border-color:var(--ink); transform:translateY(-1px)}
+.cal-day:disabled{opacity:.22; cursor:default; background:transparent}
+.cal-day.wkend:not(:disabled){background:#f2efe4; color:#8b8563}
+.cal-day.today{border-color:var(--green); border-style:dashed}
+.cal-day.sel{
+  background:var(--green); color:#fff; border-color:var(--ink);
+  box-shadow:0 2px 0 var(--ink); font-weight:600;
+}
+.cal-day.inrange{background:var(--green-l); border-radius:0}
+.cal-day.inrange.wkend{background:#f2efe4}
+.cal-sel b{font-size:14.5px; color:var(--ink); letter-spacing:.06em}
+.cal-range{white-space:nowrap}
+.cal-foot{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  margin-top:10px; padding-top:10px; border-top:2px dashed var(--green-l);
+}
+.cal-sel{
+  font-family:var(--mono); font-size:13px; font-weight:600; letter-spacing:.1em; color:var(--green-d);
+  min-height:38px; display:flex; flex-wrap:wrap; align-items:center; align-content:center; column-gap:7px;
+}
+.go{
+  font-family:var(--mono); font-weight:600; font-size:14px; letter-spacing:.08em; text-transform:uppercase;
+  background:var(--green); color:#fff; border:2.5px solid var(--ink); border-radius:3px;
+  padding:12px 22px; cursor:pointer; box-shadow:3px 3px 0 rgba(8,54,28,.4);
+  transition:transform .07s, box-shadow .07s, background .1s;
+}
+.go:hover{background:var(--green-d); transform:translate(1px,-1px); box-shadow:4px 4px 0 rgba(8,54,28,.5)}
+.go:active{transform:translate(3px,2px); box-shadow:1px 1px 0 rgba(8,54,28,.5)}
+.back{
+  position:absolute; top:-19px; right:18px;
+  font-family:var(--mono); font-size:13px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink); background:var(--paper); border:2.5px solid var(--ink); border-radius:3px;
+  padding:8px 18px; cursor:pointer; box-shadow:3px 3px 0 rgba(8,54,28,.3);
+}
+.back:hover{background:var(--green-l)}
+.hint{font-family:var(--mono); font-size:11.5px; color:#7c9a89; margin:2px 0 0; letter-spacing:.03em}
+.disclaimer{
+  width:min(960px,100%); margin:9px 0 0; font-family:var(--mono); font-size:10px;
+  letter-spacing:.06em; color:#679a7c; text-transform:uppercase; text-align:right;
+}
+
+/* ── result panel ── */
+.result{position:fixed; inset:0; z-index:40; display:flex; padding:clamp(10px,2.6vh,26px) clamp(10px,3vw,30px)}
+.result::before{content:""; position:absolute; inset:0; background:rgba(247,248,244,.75); backdrop-filter:blur(4px)}
+.panel{
+  position:relative; flex:1; display:flex; flex-direction:column; min-height:0;
+  background:var(--paper); border:3px solid var(--ink); border-radius:4px;
+  box-shadow:var(--shadow), inset 0 0 0 1.5px rgba(18,160,74,.25); overflow:hidden;
+  animation:sheetup .55s cubic-bezier(.22,.85,.28,1.02) both;
+}
+@keyframes sheetup{from{transform:translateY(100vh)}}
+.ptabs{
+  display:flex; gap:8px; align-items:center; padding:12px 16px;
+  border-bottom:3px solid var(--ink); flex-wrap:wrap;
+  background:linear-gradient(to bottom, var(--mint), var(--paper-2));
+}
+.ptabs .spacer{flex:0}
+.ptitle{ /* takes the free space, then ellipsises rather than pushing a button onto a second row */
+  font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.14em;
+  color:var(--ink); text-transform:uppercase;
+  flex:1 1 0; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.ptitle::before{content:"▣"; color:var(--green); font-size:14px; margin-right:10px; vertical-align:-1px}
+.tool{
+  font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+  background:var(--paper); border:2px solid var(--ink); border-radius:3px;
+  padding:7px 13px; cursor:pointer; box-shadow:2.5px 2.5px 0 rgba(8,54,28,.35);
+  transition:transform .07s, box-shadow .07s, background .1s;
+}
+.tool:hover{background:var(--green-l); transform:translate(1px,-1px); box-shadow:3.5px 3.5px 0 rgba(8,54,28,.45)}
+.tool:active{transform:translate(2px,1.5px); box-shadow:.5px .5px 0 rgba(8,54,28,.45)}
+
+/* one scrolling sheet */
+.sheet{flex:1; min-height:0; overflow:auto; padding:clamp(18px,3.4vh,32px) clamp(16px,4vw,40px) 44px; scroll-behavior:smooth}
+.sheet > *{max-width:820px; margin-inline:auto}
+.secttl{
+  display:flex; align-items:center; gap:12px; margin:clamp(30px,5.5vh,48px) 0 16px;
+  font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.14em;
+  color:var(--green-d); text-transform:uppercase;
+}
+.secttl::before{content:"//"; color:var(--green); font-weight:400}
+.secttl::after{content:""; flex:1; height:3px;
+  background:repeating-linear-gradient(90deg,var(--green-l) 0 10px,transparent 10px 15px)}
+
+/* the note — deliberately papery amid the game UI */
+.note{
+  position:relative; border:2.5px solid var(--ink); border-radius:2px;
+  padding:clamp(20px,3.2vh,30px) clamp(18px,3vw,32px) calc(clamp(20px,3.2vh,30px) + 70px);
+  background:linear-gradient(178deg, var(--paper) 60%, #f4f7f1);
+  font-family:Georgia,serif; box-shadow:5px 5px 0 rgba(8,54,28,.18);
+}
+.note::after{
+  content:"NOVELTY · NOT A MEDICAL DOCUMENT"; position:absolute; right:6%; bottom:16px;
+  transform:rotate(-5deg); font-family:var(--mono); font-weight:600;
+  font-size:13px; letter-spacing:.14em; color:rgba(18,160,74,.22);
+  border:3.5px solid rgba(18,160,74,.22); border-radius:3px; padding:5px 22px;
+  pointer-events:none; white-space:nowrap;
+}
+.note h2{margin:0; font-family:var(--serif); font-weight:400; font-size:clamp(21px,2.2vw,27px); letter-spacing:.02em}
+.note .hd{display:flex; justify-content:space-between; align-items:flex-start; gap:16px;
+  border-bottom:2px solid var(--ink); padding-bottom:10px; margin-bottom:16px}
+.note .meta{font-family:var(--mono); font-size:10px; text-align:right; color:var(--ink-2); line-height:1.7; letter-spacing:.06em; white-space:nowrap}
+.note dl{display:grid; grid-template-columns:150px 1fr; gap:9px 16px; margin:0}
+.note dt{font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.14em; color:var(--ink-2); padding-top:5px}
+.note dd{margin:0; font-size:16px}
+.note .sub{font-size:13px; color:var(--ink-2)}
+.note .dim{color:var(--ink-2)}
+.sig-fine{text-align:right}
+.sig{margin-top:24px; display:flex; justify-content:space-between; align-items:flex-end; gap:20px}
+.sig .scrawl{font-family:"Snell Roundhand","Bradley Hand","Segoe Script",cursive; font-size:clamp(27px,3vw,36px); color:var(--green-d); line-height:.9}
+.sig small{font-family:var(--mono); font-size:10px; color:var(--ink-2); display:block; border-top:1.5px solid var(--ink); padding-top:4px; margin-top:4px; letter-spacing:.06em}
+
+/* plan timeline */
+.planline{font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.06em; color:var(--green-d); margin:0 0 22px; text-transform:uppercase}
+.tl{
+  /* The node is a real element in its own grid column, and the rail is painted
+     down that same column's centre line. Horizontal alignment is therefore done
+     by layout (justify-self:center), not by arithmetic — so it cannot drift when
+     the card's border or padding changes. */
+  --rail:44px;        /* width of the rail column */
+  --rail-w:3px;
+  --node:19px;        /* border box; see box-sizing on .node */
+  --card-border:2.5px;
+  --card-pad:18px;
+  --when-lh:21px;     /* .when line box: 14px * 1.5 */
+  list-style:none; margin:0 auto; padding:6px 0 10px; position:relative;
+  max-width:660px; display:flex; flex-direction:column; gap:26px;
+}
+.tl::before{ /* the rail runs down the centre of the rail column */
+  content:""; position:absolute; top:6px; bottom:10px;
+  left:calc(var(--rail)/2 - var(--rail-w)/2); width:var(--rail-w);
+  background:repeating-linear-gradient(180deg,var(--green-l) 0 10px,transparent 10px 15px);
+}
+.tl li{display:grid; grid-template-columns:var(--rail) 1fr; align-items:start}
+.tl .node{
+  /* the * reset uses the universal selector, which skips pseudo-elements — this
+     used to be a ::before that silently fell back to content-box and sat 3px off.
+     As a real element it is both border-box and measurable. */
+  box-sizing:border-box;
+  justify-self:center;                    /* <- the alignment */
+  width:var(--node); height:var(--node);
+  margin-top:calc(var(--card-border) + var(--card-pad) + var(--when-lh)/2 - var(--node)/2);
+  background:var(--paper); border:3px solid var(--ink); border-radius:2px;
+  transform:rotate(45deg);
+}
+.tl .card{
+  border:var(--card-border) solid var(--ink); border-radius:3px;
+  background:#dff2e5; padding:var(--card-pad) 22px;
+  box-shadow:4px 4px 0 rgba(8,54,28,.2);
+  display:flex; flex-direction:column; gap:10px;
+}
+.tl li.dday .node{background:var(--green); box-shadow:0 0 0 4px rgba(18,160,74,.3)}
+.tl li.dday .card{border-color:var(--green-d); box-shadow:4px 4px 0 rgba(11,113,54,.45); background:#d3eedd}
+.tl li.dday .when{color:var(--ink)}
+.tl li.dday .when::after{
+  content:"● TARGET"; margin-left:10px; color:#fff; background:var(--green);
+  border-radius:2px; padding:2px 8px; font-size:10px; letter-spacing:.12em;
+}
+.tl .when{
+  font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.06em;
+  color:var(--green-d); text-transform:uppercase;
+}
+.tl .what{font-weight:700; font-size:clamp(18px,1.7vw,21px); margin:0; letter-spacing:-.01em; line-height:1.25}
+.tl .script{
+  position:relative; background:rgba(251,252,249,.75); border:2px solid rgba(8,54,28,.5);
+  border-radius:3px; padding:10px 14px 10px 34px; font-size:16px; font-weight:500;
+}
+.tl .script::before{
+  content:"\201C"; position:absolute; left:10px; top:2px;
+  font-family:var(--serif); font-size:30px; line-height:1; color:var(--green-d);
+}
+.tl .script::after{content:"\201D"; font-family:var(--serif); color:var(--green-d)}
+.tl .why{margin:0; font-size:15px; color:#2f5340}
+
+/* odds */
+.odds{display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,3vw,32px)}
+.odds > div{
+  border:2.5px solid var(--ink); border-radius:3px; padding:18px 20px;
+  background:var(--paper); box-shadow:4px 4px 0 rgba(8,54,28,.2);
+}
+.odds h3{margin:0 0 12px; font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ink)}
+.odds p{margin:0; font-size:15px}
+.bigpct{font-family:var(--sans); font-weight:700; font-size:clamp(40px,5.5vw,62px); line-height:1; letter-spacing:-.03em; color:var(--ink)}
+.meter{height:16px; background:var(--paper-2); border:2.5px solid var(--ink); border-radius:2px; overflow:hidden; margin:14px 0}
+.meter i{display:block; height:100%;
+  background:repeating-linear-gradient(135deg,var(--green) 0 10px,var(--green-d) 10px 20px);
+  animation:fillup .8s cubic-bezier(.2,.8,.3,1) both}
+@keyframes fillup{from{width:0!important}}
+ul.dont{margin:0; padding-left:2px; list-style:none; font-size:15px}
+ul.dont li{margin-bottom:10px; padding-left:24px; position:relative}
+ul.dont li::before{content:"✕"; position:absolute; left:0; top:1px; font-family:var(--mono); font-weight:600; color:#c23b2e}
+.endnote{margin:38px 0 0; font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--ink-3); text-align:center; text-transform:uppercase}
+
+@media (max-width:760px){
+  .ptabs{padding:10px 12px; gap:6px}
+  .ptitle{flex-basis:100%}
+  .tool{padding:6px 9px; font-size:10px}
+  .note dl{grid-template-columns:1fr}
+  .note{padding-bottom:clamp(20px,3.2vh,30px)}
+  .note::after{display:none}
+  .sig{flex-wrap:wrap; gap:18px}
+  .sig > div{flex:1 1 100%}
+  .sig-fine{text-align:left}
+  .odds{grid-template-columns:1fr}
+  .bg img{object-position:center 26%}
+  .opt{padding-left:50px}
+  .ui.grid2 .ui-inner{grid-template-columns:1fr}
+  /* the picker is inline in the tray down here, so keep the whole card above the fold */
+  .cal-day{height:26px; font-size:11.5px}
+  .cal-foot{margin-top:8px}
+  .go{white-space:nowrap}
+  .back{top:auto; bottom:-18px; right:12px; font-size:12px; padding:7px 14px}
+  .go{padding:10px 14px; font-size:12.5px}
+}
+/* ── portrait phones: illustration up top, speckled floor below ──
+   The gif keeps its own white paper; the page continues the desk-front
+   green so the dialogue box sits on the "floor" like the comp. */
+@media (max-width:760px) and (orientation:portrait){
+  .bg{
+    background-color:var(--stage-green);
+    background-image:var(--speckle);
+    background-size:240px 240px;
+  }
+  .bg img{
+    top:0; bottom:auto; height:52vh; height:52svh;
+    object-fit:cover; object-position:51% top;   /* doctor centred; desk edge meets the floor */
+  }
+  .bg::after{ /* repurpose the vignette: same speckle floor, masked to fade in
+                 over the gif's desk so the two textures crossfade, not butt-join */
+    background-color:var(--stage-green);
+    background-image:var(--speckle);
+    background-size:240px 240px;
+    -webkit-mask-image:linear-gradient(180deg, transparent calc(52vh - 44px), #000 calc(52vh - 6px));
+    mask-image:linear-gradient(180deg, transparent calc(52vh - 44px), #000 calc(52vh - 6px));
+    -webkit-mask-image:linear-gradient(180deg, transparent calc(52svh - 44px), #000 calc(52svh - 6px));
+    mask-image:linear-gradient(180deg, transparent calc(52svh - 44px), #000 calc(52svh - 6px));
+  }
+  .scene{
+    padding-bottom:calc(clamp(26px,8vh,80px) + env(safe-area-inset-bottom));
+    padding-bottom:calc(clamp(26px,8svh,80px) + env(safe-area-inset-bottom));
+  }
+  /* height budget: the panel may take 88svh when the script runs long, but the
+     monologue never takes more than 44svh of it — options always keep their room.
+     Short screens stay short, so the doctor is covered only when Holm rambles. */
+  .dialogue{max-height:84vh; max-height:84svh; padding:24px 14px 16px}
+  .say{
+    margin-bottom:12px; min-height:2.2em; font-size:16px; line-height:1.5;
+    max-height:34vh; max-height:34svh; overflow:auto;
+  }
+  .dialogue:has(.cal) .say{font-size:15px; margin-bottom:10px; max-height:24vh; max-height:24svh}
+  .scene:has(.cal) .plate{visibility:hidden}   /* the tall picker panel runs into it */
+  .ui-inner{gap:8px}
+  .opt{padding:9px 12px 9px 46px; font-size:14px}
+  .opt::before{left:10px; width:24px; height:24px; font-size:12px}
+  .opt small{font-size:12px}
+  .nametag{font-size:11.5px; max-width:calc(100% - 30px)}
+  .nametag em{font-size:9.5px; flex:0 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .disclaimer{color:rgba(255,255,255,.85)}
+  .plate-sub{color:#4d8a66}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important; transition:none!important}
+  .bg{background:#f7f8f4 url("assets/doctor-still.jpg") no-repeat center 22%/cover}
+  .bg img{display:none} /* GIFs can't be paused; fall back to the still */
+}
+@media (prefers-reduced-motion:reduce) and (max-width:760px) and (orientation:portrait){
+  .bg{ /* still frame as the top band, speckle floor beneath */
+    background-color:var(--stage-green);
+    background-image:url("assets/doctor-still.jpg"), var(--speckle);
+    background-position:51% top, 0 0;
+    background-size:auto 52vh, 240px 240px;
+    background-size:auto 52svh, 240px 240px;
+    background-repeat:no-repeat, repeat;
+  }
+}
+@media print{
+  html,body{overflow:visible; height:auto}
+  .bg,.grain,.scene,.ptabs,.result::before,.secttl,.planline,.tl,.odds,.endnote{display:none!important}
+  .result{position:static; padding:0}
+  .panel{border:0; box-shadow:none; animation:none}
+  .sheet{overflow:visible; padding:0}
+}
