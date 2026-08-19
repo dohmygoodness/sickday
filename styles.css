@@ -76,7 +76,9 @@ body.talking .bg .type{opacity:1}
   padding:30px clamp(18px,2.6vw,28px) 22px;
   box-shadow:var(--shadow), inset 0 0 0 1.5px rgba(18,160,74,.25);
   max-height:76vh; display:flex; flex-direction:column;
-  animation:rise .28s cubic-bezier(.2,.9,.3,1.2) both;
+  /* fill:backwards, not both — a filled transform (even identity) would become a
+     containing block and trap the fixed-position back button on mobile */
+  animation:rise .28s cubic-bezier(.2,.9,.3,1.2) backwards;
 }
 @keyframes rise{from{transform:translateY(18px); opacity:0}}
 
@@ -419,27 +421,47 @@ ul.dont li::before{content:"✕"; position:absolute; left:0; top:1px; font-famil
     -webkit-mask-image:linear-gradient(180deg, transparent calc(52svh - 44px), #000 calc(52svh - 6px));
     mask-image:linear-gradient(180deg, transparent calc(52svh - 44px), #000 calc(52svh - 6px));
   }
-  .scene{
-    padding-bottom:calc(clamp(26px,8vh,80px) + env(safe-area-inset-bottom));
-    padding-bottom:calc(clamp(26px,8svh,80px) + env(safe-area-inset-bottom));
+  /* The box is TOP-anchored just over the desk edge and grows DOWNWARD:
+     the gap above it is constant, and the doctor's face can never be covered.
+     The monologue keeps a height cap so the options always have room below. */
+  .scene{justify-content:flex-start; padding-bottom:0}
+  .consult{margin-top:40vh; margin-top:40svh}
+  .dialogue{
+    padding:22px 14px 14px;
+    max-height:calc(60vh - 46px - env(safe-area-inset-bottom));
+    max-height:calc(60svh - 46px - env(safe-area-inset-bottom));
+    backdrop-filter:none;   /* a backdrop-filter would trap the fixed-position back button */
   }
-  /* height budget: the panel may take 88svh when the script runs long, but the
-     monologue never takes more than 44svh of it — options always keep their room.
-     Short screens stay short, so the doctor is covered only when Holm rambles. */
-  .dialogue{max-height:84vh; max-height:84svh; padding:24px 14px 16px}
   .say{
-    margin-bottom:12px; min-height:2.2em; font-size:16px; line-height:1.5;
-    max-height:34vh; max-height:34svh; overflow:auto;
+    margin-bottom:10px; min-height:2.2em; font-size:15px; line-height:1.45;
+    max-height:30vh; max-height:30svh; overflow:auto;
+    flex:0 0 auto;   /* don't shrink when the tray opens — keeps the scroll pinned to the end */
   }
-  .dialogue:has(.cal) .say{font-size:15px; margin-bottom:10px; max-height:24vh; max-height:24svh}
-  .scene:has(.cal) .plate{visibility:hidden}   /* the tall picker panel runs into it */
-  .ui-inner{gap:8px}
-  .opt{padding:9px 12px 9px 46px; font-size:14px}
-  .opt::before{left:10px; width:24px; height:24px; font-size:12px}
-  .opt small{font-size:12px}
+  /* calendar screens: the box rises over the doctor for a beat — the picker
+     needs the room more than he does, and he comes back after */
+  .scene:has(.cal) .consult{margin-top:12vh; margin-top:12svh}
+  .dialogue:has(.cal){
+    max-height:calc(88vh - 46px - env(safe-area-inset-bottom));
+    max-height:calc(88svh - 46px - env(safe-area-inset-bottom));
+  }
+  .dialogue:has(.cal) .say{font-size:14px; margin-bottom:8px; max-height:20vh; max-height:20svh}
+  .scene:has(.cal) .plate{visibility:hidden}   /* the risen panel runs into it */
+  .ui-inner{gap:7px}
+  .opt{padding:8px 10px 8px 42px; font-size:13.5px}
+  .opt::before{left:9px; width:22px; height:22px; font-size:11.5px}
+  .opt small{font-size:11.5px}
   .nametag{font-size:11.5px; max-width:calc(100% - 30px)}
   .nametag em{font-size:9.5px; flex:0 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-  .disclaimer{color:rgba(255,255,255,.85)}
+  /* bottom furniture: disclaimer glued to the floor, back in the corner */
+  .disclaimer{
+    position:fixed; left:12px; right:12px; width:auto; margin:0;
+    bottom:calc(6px + env(safe-area-inset-bottom));
+    color:rgba(255,255,255,.85);
+  }
+  .back{
+    position:fixed; top:auto; left:auto;
+    right:12px; bottom:calc(36px + env(safe-area-inset-bottom));
+  }
   .plate-sub{color:#4d8a66}
 }
 @media (prefers-reduced-motion:reduce){
