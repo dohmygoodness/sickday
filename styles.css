@@ -355,7 +355,10 @@ body.talking .bg .type{opacity:1}
   content:"\201C"; position:absolute; left:10px; top:2px;
   font-family:var(--serif); font-size:30px; line-height:1; color:var(--green-d);
 }
-.tl .script::after{content:"\201D"; font-family:var(--serif); color:var(--green-d)}
+.tl .script::after{ /* match the 30px opener; zero line-height so it doesn't stretch the row */
+  content:"\201D"; font-family:var(--serif); color:var(--green-d);
+  font-size:30px; line-height:0; display:inline-block; transform:translateY(.3em); margin-left:2px;
+}
 .tl .why{margin:0; font-size:15px; color:#2f5340}
 
 /* odds */
@@ -422,15 +425,25 @@ ul.dont li::before{content:"✕"; position:absolute; left:0; top:1px; font-famil
     -webkit-mask-image:linear-gradient(180deg, transparent calc(52svh - 44px), #000 calc(52svh - 6px));
     mask-image:linear-gradient(180deg, transparent calc(52svh - 44px), #000 calc(52svh - 6px));
   }
-  /* The box is CENTER-anchored a little under the desk edge and grows BOTH
-     ways; at full height it stops short of the face above and the disclaimer
-     below. The monologue keeps a height cap so options keep room below. */
-  .scene{justify-content:flex-start; padding-bottom:0}
-  .consult{margin-top:58vh; margin-top:58svh; transform:translateY(-50%)}
+  /* Waterline layout: the box top starts at the waterline (49svh) and fills
+     DOWNWARD first; once it reaches the floor it grows UPWARD instead, stopping
+     where the doctor's face begins (27svh). Scene padding fences the region;
+     the consult's min-height holds the top at the waterline until content
+     actually needs the headroom (scene is bottom-justified, box sits at the
+     consult's top). */
+  .scene{
+    padding:27vh 12px calc(46px + env(safe-area-inset-bottom));
+    padding:27svh 12px calc(46px + env(safe-area-inset-bottom));
+  }
+  .consult{
+    flex-direction:column; justify-content:flex-start; align-items:stretch;
+    min-height:calc(51vh - 46px - env(safe-area-inset-bottom));
+    min-height:calc(51svh - 46px - env(safe-area-inset-bottom));
+  }
   .dialogue{
     padding:22px 14px 14px;
-    max-height:calc(60vh - 46px - env(safe-area-inset-bottom));
-    max-height:calc(60svh - 46px - env(safe-area-inset-bottom));
+    max-height:calc(73vh - 46px - env(safe-area-inset-bottom));
+    max-height:calc(73svh - 46px - env(safe-area-inset-bottom));
     backdrop-filter:none;   /* a backdrop-filter turns the box into a containing block */
   }
   .say{
@@ -443,7 +456,11 @@ ul.dont li::before{content:"✕"; position:absolute; left:0; top:1px; font-famil
   .say,.ui-inner{overflow-x:hidden; overscroll-behavior:contain; touch-action:pan-y}
   /* calendar screens: the box rises over the doctor for a beat — the picker
      needs the room more than he does, and he comes back after */
-  .scene:has(.cal) .consult{margin-top:50vh; margin-top:50svh}
+  .scene:has(.cal){padding-top:10vh; padding-top:10svh}
+  .dialogue:has(.cal){
+    max-height:calc(90vh - 46px - env(safe-area-inset-bottom));
+    max-height:calc(90svh - 46px - env(safe-area-inset-bottom));
+  }
   .dialogue:has(.cal){
     max-height:calc(88vh - 46px - env(safe-area-inset-bottom));
     max-height:calc(88svh - 46px - env(safe-area-inset-bottom));

@@ -37,7 +37,7 @@ const ILLNESSES = [
        script:"that chicken place near the office was... optimistic",
        note:"Say it in person or in a channel your manager isn't in. You want a witness, not an announcement."},
       {off:0, time:"05:40", what:"Message before they're awake",
-       script:"Up half the night — something I ate. Not going to be any use today. Will keep you posted.",
+       script:"Up half the night, something I ate. Not going to be any use today. Will keep you posted.",
        note:"Send it early. Early reads as suffering. 9:01 reads as deciding."},
       {off:0, time:"all day", what:"Go quiet, but not dark",
        script:"", note:"One short reply late morning, then nothing. Silence is symptom-consistent."},
@@ -77,7 +77,7 @@ const ILLNESSES = [
       {off:-2, time:"lunch", what:"Chew on one side. Say nothing.",
        script:"", note:"If asked: 'something back here is angry.' Then change the subject."},
       {off:-1, time:"16:00", what:"Book the imaginary appointment out loud",
-       script:"Trying to get in with a dentist tomorrow — I'll know by tonight.",
+       script:"Trying to get in with a dentist tomorrow. I'll know by tonight.",
        note:"This is the move. You've now pre-announced an absence instead of calling in sick."},
       {off:0, time:"07:30", what:"Confirm it",
        script:"Got an emergency slot this morning. They think it needs work. I'll message when I'm out.",
@@ -100,7 +100,7 @@ const ILLNESSES = [
        script:"something's in my eye and it will not leave",
        note:"Do it near someone who repeats things."},
       {off:0, time:"07:00", what:"Lead with contagion, not with you",
-       script:"Woke up with my eye swollen shut and weeping. Pretty sure it's conjunctivitis — I shouldn't be around anyone until it clears.",
+       script:"Woke up with my eye swollen shut and weeping. Pretty sure it's conjunctivitis. I shouldn't be around anyone until it clears.",
        note:"Frame it as protecting them. That flips the conversation entirely."},
       {off:0, time:"11:00", what:"Offer the thing you know they'll refuse",
        script:"Happy to come in if it's urgent.",
@@ -121,16 +121,16 @@ const ILLNESSES = [
        script:"half my partner's office has some stomach thing",
        note:"Attribute the outbreak to somewhere nobody can check."},
       {off:-1, time:"late", what:"Leave a little early, quietly",
-       script:"Heading off a bit early — stomach's off.",
+       script:"Heading off a bit early, stomach's off.",
        note:"Quietly is the whole instruction. No drama."},
       {off:0, time:"06:15", what:"Call it in",
-       script:"It's the stomach thing. I'm out today — the guidance is 48 hours clear before I'm back around people.",
+       script:"It's the stomach thing. I'm out today. The guidance is 48 hours clear before I'm back around people.",
        note:"Citing 'the guidance' makes it policy, not preference."},
       {off:1, kind:"second", time:"08:00", what:"Take the second day the guidance gave you",
        script:"Still inside the 48. Back tomorrow, I'll pick up everything then.",
        note:"Only if you asked for two days. Don't get greedy on the fly."},
       {off:1, time:"16:00", what:"Reappear in writing before you reappear in person",
-       script:"Caught up on the thread — I'll take the Tuesday item.",
+       script:"Caught up on the thread. I'll take the Tuesday item.",
        note:"Coming back with one concrete commitment ends the conversation."}
     ],
     dont:["Don't be seen eating a large lunch on day one back.","Don't specify symptoms. Nobody wants that and it dates you as a liar.","Don't return early to look heroic — it undoes the 48-hour logic."]
@@ -145,7 +145,7 @@ const ILLNESSES = [
        script:"I'm knackered and I slept fine, which is annoying",
        note:"Fatigue first. Always fatigue first. It's the only symptom nobody can see."},
       {off:-2, time:"afternoon", what:"Add one physical detail",
-       script:"my whole back aches — I think I'm coming down with something",
+       script:"my whole back aches, I think I'm coming down with something",
        note:"Aches, not a cough. Coughs invite people to listen for a cough."},
       {off:-1, time:"15:00", what:"Pre-announce the risk",
        script:"Heads up: I feel like I'm getting whatever's going round. If I'm worse tomorrow I'll have to call it.",
@@ -153,10 +153,10 @@ const ILLNESSES = [
       {off:-1, time:"evening", what:"Clear your desk in public",
        script:"", note:"Hand off one small thing before you leave. Sick people tidy. Liars don't."},
       {off:0, time:"06:45", what:"Confirm the forecast",
-       script:"It landed. Fever overnight, feeling wrecked. I'm out today — I'll reassess tonight.",
+       script:"It landed. Fever overnight, feeling wrecked. I'm out today. I'll reassess tonight.",
        note:"'I'll reassess tonight' quietly reserves tomorrow without asking for it."},
       {off:1, kind:"second", time:"07:30", what:"Take day two if you booked it",
-       script:"Still running a temperature. Out again — everything's in the doc, I've flagged the two urgent ones.",
+       script:"Still running a temperature. Out again. Everything's in the doc, I've flagged the two urgent ones.",
        note:"Do the flagging the night before, from bed, at 22:40. The timestamp is the alibi."},
       {off:1, time:"09:15", what:"Return at 80%",
        script:"Back but slow. Give me till this afternoon for anything big.",
@@ -173,10 +173,10 @@ const ILLNESSES = [
       {off:-2, time:"any time", what:"Sound slightly wrong",
        script:"", note:"Talk half a tone flatter. Say 'sorry, blocked up' once and never again."},
       {off:-1, time:"16:30", what:"Mention the pressure, not the mucus",
-       script:"Got that pressure behind my face — sinus thing starting.",
+       script:"Got that pressure behind my face. Sinus thing starting.",
        note:"Pressure sounds medical. The other word sounds like a cold, and colds don't get days."},
       {off:0, time:"07:15", what:"Call it in flatly",
-       script:"Sinuses are fully blocked, head's pounding. I'm no good on calls today — I'll work through email if I can.",
+       script:"Sinuses are fully blocked, head's pounding. I'm no good on calls today. I'll work through email if I can.",
        note:"Offering email costs you nothing and buys enormous goodwill."},
       {off:0, time:"13:00", what:"Send two emails and stop",
        script:"", note:"Two. From a phone. Short. Then done for the day."},
@@ -193,7 +193,7 @@ const ILLNESSES = [
     doc:"Back. Nobody can see it, everybody has had it, and the moment you say the word 'commute' the conversation is over.",
     steps:[
       {off:-4, time:"any time", what:"Stand up wrong, once, in public",
-       script:"ugh — did something to my back at the weekend",
+       script:"ugh, did something to my back at the weekend",
        note:"Weekend injuries are unverifiable and blame nobody at work. That's the point."},
       {off:-2, time:"afternoon", what:"Adjust your chair. Loudly.",
        script:"this chair is not helping",
@@ -202,7 +202,7 @@ const ILLNESSES = [
        script:"Back's worse today. If I can't sit properly tomorrow I'll have to work flat or take the day.",
        note:"Two exits offered. They'll usually pick the generous one for you."},
       {off:0, time:"07:00", what:"Take it",
-       script:"Seized up overnight — I can't sit or do the commute today. Taking it as sick, back tomorrow.",
+       script:"Seized up overnight. I can't sit or do the commute today. Taking it as sick, back tomorrow.",
        note:"'Can't do the commute' is the load-bearing clause. Keep it."},
       {off:1, time:"09:00", what:"Come back and stand up a lot",
        script:"Better. Going to stand for a bit of today.",
@@ -222,10 +222,10 @@ const ILLNESSES = [
        script:"I've got an appointment on the {DDAY}, it's in the calendar.",
        note:"Once. In passing. Then never mention it again until the day."},
       {off:-1, time:"16:00", what:"Do the handover properly",
-       script:"Reminder I'm out tomorrow for the appointment — {ONE} is covered, {TWO} can wait till Thursday.",
+       script:"Reminder I'm out tomorrow for the appointment. {ONE} is covered, {TWO} can wait till Thursday.",
        note:"A real handover is the strongest possible signal that this is legitimate. Do it well."},
       {off:0, time:"08:00", what:"One line. No detail.",
-       script:"At the appointment this morning — I'll be off the rest of the day.",
+       script:"At the appointment this morning. I'll be off the rest of the day.",
        note:"Never name the procedure. 'Appointment' is complete. Detail is what breaks people."},
       {off:1, time:"09:00", what:"Return and say nothing about it",
        script:"", note:"If asked: 'all fine, thanks.' Full stop. Anyone who pushes past that is being rude and knows it."}
@@ -239,7 +239,7 @@ const ILLNESSES = [
     doc:"Kidney stone. Nothing to set up — it turns up at four in the morning and it's the worst pain of your life. It buys the day cleanly. The cost is that it's memorable: you're signing up to tell this story at every leaving do for the rest of your career.",
     steps:[
       {off:0, time:"04:50", what:"Message from the middle of the night",
-       script:"Up since three with something in my side — worst pain I've ever had. Getting it looked at. Out today.",
+       script:"Up since three with something in my side, worst pain I've ever had. Getting it looked at. Out today.",
        note:"The 04:50 timestamp does more work than any sentence you could write. Send it and put the phone down."},
       {off:0, time:"11:30", what:"One update, then nothing",
        script:"Been given something for the pain. Told to wait it out.",
@@ -281,16 +281,16 @@ const ILLNESSES = [
     doc:"If you have a small one, this is the strongest card in the deck and it isn't close. Nursery rings, there's a temperature, the policy says forty-eight hours. It isn't even a lie about you — and nobody in your building is permitted to look annoyed about it.",
     steps:[
       {off:0, time:"07:10", what:"Lead with their policy, not your child",
-       script:"Nursery's just called — the little one's got a temperature and they won't have them back for 48 hours. I'm out today, I'll pick things up tonight.",
+       script:"Nursery's just called. The little one's got a temperature and they won't have them back for 48 hours. I'm out today, I'll pick things up tonight.",
        note:"The forty-eight hours is not your rule, it's theirs. Quote it once and let it do the arguing for you."},
       {off:0, time:"20:30", what:"Reappear at bedtime, briefly",
-       script:"Catching up now — read the thread, nothing needs me tonight.",
+       script:"Catching up now. Read the thread, nothing needs me tonight.",
        note:"A 20:30 message is the entire performance. It says you'd have worked if you could, which is the only thing anybody actually wants to hear."},
       {off:1, kind:"second", time:"07:15", what:"Day two was written yesterday",
-       script:"Still inside the 48 — back Thursday.",
+       script:"Still inside the 48, back Thursday.",
        note:"You pre-loaded this. Add no new information; just point at the clock."},
       {off:1, time:"09:00", what:"Return without apologising twice",
-       script:"Back — thanks for covering.",
+       script:"Back. Thanks for covering.",
        note:"Once. Repeated apologies turn an ordinary absence into a favour you now owe."}
     ],
     dont:["Don't do this without a child. It ends badly and it ends fast.","Don't add an illness of your own on top. One absence, one cause.","Don't bring the child onto a video call to prove it. It reads as exactly what it is."]
@@ -302,10 +302,10 @@ const ILLNESSES = [
     doc:"Vertigo. Invisible, unprovable, and it takes driving off the table without you ever saying the word 'commute'. It also lingers plausibly, which a migraine doesn't — a migraine that lasts three days is a migraine somebody starts asking about.",
     steps:[
       {off:-1, time:"afternoon", what:"Stand up too fast. Once. Near someone.",
-       script:"whoa — head rush. that's the third one today",
+       script:"whoa, head rush. that's the third one today",
        note:"Say 'head rush', not 'dizzy'. A head rush is a thing that happens to people. Dizzy is a thing people claim."},
       {off:0, time:"06:50", what:"Lead with the driving",
-       script:"Room spins every time I move my head — came on overnight. Can't drive, can't really look at a screen. Out today.",
+       script:"Room spins every time I move my head, came on overnight. Can't drive, can't really look at a screen. Out today.",
        note:"Driving ends the negotiation. If you don't drive, 'can't get down the stairs' does the same job."},
       {off:0, time:"15:00", what:"Reply badly, on purpose",
        script:"sorry - lying still, will read properly tmrw",
@@ -332,7 +332,7 @@ const ILLNESSES = [
        script:"",
        note:"Take the lift once, where someone sees. Don't limp yet — the swelling comes first and everybody knows that."},
       {off:0, time:"07:20", what:"Call it on the swelling",
-       script:"Ankle's ballooned overnight — I can't get a shoe on it, never mind the commute. Keeping it up today.",
+       script:"Ankle's ballooned overnight. I can't get a shoe on it, never mind the commute. Keeping it up today.",
        note:"'Can't get a shoe on' is the sentence. Concrete, faintly absurd, completely unanswerable."},
       {off:1, kind:"second", time:"08:00", what:"Day two, if you booked it",
        script:"Still can't put weight through it. I'll work off the sofa today and be in tomorrow.",
@@ -353,7 +353,7 @@ const ILLNESSES = [
        script:"I'm getting my flu jab Thursday, it's in the calendar.",
        note:"Actually book it. Actually go. From here you're not lying about anything except a temperature, and temperatures are private."},
       {off:-1, time:"16:00", what:"Report the jab, plant the possibility",
-       script:"Had the jab. Arm's already sore — last one flattened me for a day, so fingers crossed.",
+       script:"Had the jab. Arm's already sore. Last one flattened me for a day, so fingers crossed.",
        note:"'Last one' does everything. You've forecast tomorrow without asking for it."},
       {off:0, time:"07:00", what:"Collect",
        script:"It's got me. Achy, feverish, arm like a rock. I'll be no use today.",
@@ -377,7 +377,7 @@ const ILLNESSES = [
        script:"",
        note:"No setup. Setup is for stories. This one doesn't need a runway, and building one only makes it look built."},
       {off:0, time:"07:00", what:"Say the small true thing",
-       script:"Not well today — I've not been sleeping and I'm no use to anyone like this. Taking it as sick, back tomorrow.",
+       script:"Not well today. I've not been sleeping and I'm no use to anyone like this. Taking it as sick, back tomorrow.",
        note:"'Back tomorrow' is the whole move. It turns a worrying message into an ordinary one and keeps the bigger conversation on your calendar, not theirs."},
       {off:0, time:"all day", what:"Actually take the day",
        script:"",
@@ -386,7 +386,7 @@ const ILLNESSES = [
        script:"One more day. Back Thursday properly.",
        note:"Plain and finite. No detail, no apology, no diagnosis you'd have to maintain afterwards."},
       {off:1, time:"09:30", what:"Return without a confession",
-       script:"Back — much better for the day, thanks.",
+       script:"Back, much better for the day, thanks.",
        note:"You owe nobody an account. If you do want the workload conversation, book it separately, in a room, on a day you've slept."}
     ],
     dont:["Don't send the long honest message at 23:00. Write it, sleep, send three lines in the morning.","Don't give one colleague the real version and your manager the short one. Those two talk.","Don't stack this on top of a fake illness the same month — that's how a real thing starts to look like a habit."]
@@ -410,10 +410,10 @@ const ILLNESSES = [
        script:"Not shifting. If it's like this tomorrow I'll get it looked at rather than sit here coughing at everyone.",
        note:"You've now announced an absence and a doctor's appointment while committing to neither."},
       {off:0, time:"07:00", what:"Confirm, and cite the doctor",
-       script:"Saw someone this morning — chest infection. Told to rest it properly or it drags on for a month. Out today.",
+       script:"Saw someone this morning. Chest infection. Told to rest it properly or it drags on for a month. Out today.",
        note:"'Or it drags on' converts your day off into their risk management."},
       {off:1, kind:"second", time:"08:00", what:"Take the second day the doctor gave you",
-       script:"Doing as I was told — one more day and I'll be back properly.",
+       script:"Doing as I was told. One more day and I'll be back properly.",
        note:"The instruction came from a professional. You are merely being obedient."},
       {off:1, time:"09:15", what:"Return still coughing",
        script:"Better. Sorry about the cough, it'll be here a fortnight.",
@@ -428,16 +428,16 @@ const ILLNESSES = [
     doc:"Shingles. It hurts before it shows, which is exactly the shape you want — days of vague nerve pain, then a rash under your clothing that nobody is going to ask to see. It's also serious enough that a decent manager stops asking and a bad one gets nervous.",
     steps:[
       {off:-5, time:"any time", what:"Misdiagnose it yourself, out loud",
-       script:"I've got a weird burning patch on my side — think I've pulled something",
+       script:"I've got a weird burning patch on my side, think I've pulled something",
        note:"Nobody inventing an illness gets it wrong on purpose. Getting it wrong first is the proof."},
       {off:-3, time:"afternoon", what:"Be tired with it",
        script:"still burning. and I'm shattered",
        note:"Two symptoms, one of them boring. The fatigue is what makes the rest credible."},
       {off:-1, time:"16:00", what:"Get it looked at, publicly",
-       script:"Getting this rash checked in the morning — hopefully it's nothing.",
+       script:"Getting this rash checked in the morning, hopefully it's nothing.",
        note:"Book it out loud. This is the last message where you sound relaxed."},
       {off:0, time:"10:30", what:"Come back with the name",
-       script:"It's shingles. On antivirals, and told to stay away from anyone who hasn't had chickenpox — that's half the floor. Out for a few days.",
+       script:"It's shingles. On antivirals, and told to stay away from anyone who hasn't had chickenpox, which is half the floor. Out for a few days.",
        note:"The contagion clause does the work. You're not requesting time, you're reporting a restriction."},
       {off:1, kind:"second", time:"09:00", what:"The rest of it is already granted",
        script:"Still on the tablets, still sore. Everything's handed over.",
@@ -461,13 +461,13 @@ const ILLNESSES = [
        script:"they're dilating my eyes on the {DDAY}, so I'll be useless after lunch",
        note:"Explain the mechanism, not the absence. You're describing a chemistry problem, not asking for anything."},
       {off:-1, time:"16:00", what:"Hand over the afternoon properly",
-       script:"Reminder I'm out from midday tomorrow for the eye appointment — {ONE} is done, {TWO} can wait till Thursday.",
+       script:"Reminder I'm out from midday tomorrow for the eye appointment. {ONE} is done, {TWO} can wait till Thursday.",
        note:"Handing over before you go is what separates this from calling in sick. Do it well and nobody thinks about it again."},
       {off:0, time:"13:30", what:"Report from behind sunglasses",
-       script:"All done. Pupils are like dinner plates, everything's a blur — no use on a screen today. Back tomorrow.",
+       script:"All done. Pupils are like dinner plates, everything's a blur. No use on a screen today. Back tomorrow.",
        note:"Send it from your phone, at arm's length, with two typos in it. Then stop."},
       {off:1, time:"09:00", what:"Return and mention nothing",
-       script:"All fine — clean bill.",
+       script:"All fine, clean bill.",
        note:"If pressed: 'routine, they just do the photos now.' True, dull, finished."}
     ],
     dont:["Don't drive that afternoon. That part isn't a joke.","Don't book it for a Friday — a Friday afternoon looks chosen. A Wednesday looks medical.","Don't put it in the same quarter as any other appointment-shaped absence."]
@@ -508,8 +508,16 @@ function mountUI(inner, twoCol = false) {
   ui.innerHTML = ""; ui.appendChild(inner);
   void ui.offsetHeight;                      // flush layout so the 0fr start applies
   setTimeout(() => ui.classList.add("open"), 20);
-  // the opening tray squeezes a capped monologue over ~.45s — keep its end in view
-  [200, 480, 900].forEach(t => setTimeout(() => { const s = $("#say"); s.scrollTop = s.scrollHeight; }, t));
+  // the opening tray squeezes a capped monologue while it animates — hold the
+  // scroll at the end until layout settles, unless the reader grabs it first
+  const s = $("#say"), t0 = performance.now();
+  let grabbed = false;
+  s.addEventListener("pointerdown", () => { grabbed = true; }, { once: true });
+  (function pin() {
+    if (grabbed) return;
+    s.scrollTop = s.scrollHeight;
+    if (performance.now() - t0 < 1600) requestAnimationFrame(pin);
+  })();
 }
 
 function options(list) {
@@ -803,7 +811,7 @@ function extraSteps() {
       script:"", note:"Ten minutes. Not thirty. Thirty is a second story you'd have to maintain." });
   if (S.boss === "hawk")
     out.push({ off:-1, time:"22:30", what:"Leave a late-night trace",
-      script:"Doing what I can from the sofa — the deck's updated.",
+      script:"Doing what I can from the sofa. The deck's updated.",
       note:"A 22:30 message from a person who feels rotten pre-empts the whole 'convenient timing' conversation." });
   if (S.boss === "peer")
     out.push({ off:0, time:"any time", what:"Say less, not more",
