@@ -11,6 +11,7 @@ const DOCTORS = [
 
 const $  = (s, r = document) => r.querySelector(s);
 const el = (t, c, h) => { const n = document.createElement(t); if (c) n.className = c; if (h != null) n.innerHTML = h; return n; };
+const pick = a => a[Math.floor(Math.random() * a.length)];   // he never says it the same way twice
 
 const DAY = 86400000;
 const today = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
@@ -475,7 +476,7 @@ const ILLNESSES = [
 ];
 
 /* ── state ─────────────────────────────────────────────────── */
-const S = { doc:DOCTORS[0], dday:null, lead:0, ill:null, days:null, work:null, boss:null };
+const S = { doc:DOCTORS[0], dday:null, lead:0, ill:null, days:null, work:null, social:null, boss:null };
 let typing = null;
 
 /* ── typewriter ───────────────────────────────────────────── */
@@ -555,18 +556,30 @@ function menu0() {
   options([
     { label:"I need a day off.", sub:"Straight to it. He respects that.", go:sceneDate },
     { label:"…how did you know?", sub:"Nobody healthy books a 4:40pm slot.", go:() =>
-      say("Nobody who's actually ill books the last appointment of the day. They come in at nine, sweating, apologising.\n\nYou booked 4:40 and you're wearing shoes you can walk in. When's the day?", sceneDateUI) },
+      say(pick([
+        "Nobody who's actually ill books the last appointment of the day. They come in at nine, sweating, apologising.\n\nYou booked 4:40 and you're wearing shoes you can walk in. When's the day?",
+        "Thirty years of family practice. The genuinely ill cancel. The healthy arrive early and rehearse in the waiting room.\n\nYou did neither, which makes you organised. When's the day?",
+        "Your posture. Sick people fold. You sat down like you were about to open a laptop.\n\nWhen's the day?",
+      ]), sceneDateUI) },
     ...SMALLTALK.filter(q => !q.asked).map(q => ({ label:q.label, sub:q.sub, go:() => smalltalk(q) })),
   ]);
 }
 
 function scene0() {
   $("#result").hidden = true; $("#scene").hidden = false; $("#back").hidden = true;
-  say("Sit down. Door's closed, nobody's listening, and I've got eleven minutes.\n\nYou're not sick. Let's not do the part where you pretend.", menu0);
+  say(pick([
+    "Sit down. Door's closed, nobody's listening, and I've got eleven minutes.\n\nYou're not sick. Let's not do the part where you pretend.",
+    "Sit. The walls are thin, but nobody in this building has listened to anything since 2019.\n\nYou're not sick. Let's skip the part where you cough.",
+    "Door. Sit. Eleven minutes.\n\nYou're not sick — you're planning something, and you've had the sense to bring it to a professional.",
+  ]), menu0);
 }
 
 function sceneDate() {
-  say("Good. Everyone else wastes four of the eleven minutes.\n\nWhen is it, and how long? A date on its own tells me nothing — three days in November and one day on Thursday are different illnesses.", sceneDateUI);
+  say(pick([
+    "Good. Everyone else wastes four of the eleven minutes.\n\nWhen is it, and how long? A date on its own tells me nothing — three days in November and one day on Thursday are different illnesses.",
+    "Straight to it. I appreciate a patient who skips the sniffing.\n\nWhen, and how long? Those two answers do all the diagnosing today.",
+    "Good. Honesty. Wrong room for it, but good.\n\nGive me the date and the length. The calendar picks the illness — I just do the handwriting.",
+  ]), sceneDateUI);
 }
 
 function sceneDateUI() {
@@ -659,18 +672,45 @@ function sceneDateUI() {
 function dateVerdict() {
   const wd = S.dday.getDay(), L = S.lead;
   let a;
-  if (L === 0) a = "Today. You've come to me *on the day*. That's not planning, that's a hostage negotiation. Your options are narrow and they all have to be fast-onset.";
-  else if (L === 1) a = "Tomorrow. Of course it's tomorrow. One night of runway — enough to plant something, not enough to build it.";
-  else if (L <= 4) a = `${L} days out. That's workable. That's an actual runway. You can be visibly unwell before you're absent, which is the whole trick.`;
-  else if (L <= 10) a = `${L} days. Now you're being professional. At this range you don't have to call in sick at all — you can put something in a calendar and let a system do the lying for you.`;
-  else a = `${L} days out. You're planning a sick day a fortnight ahead. I mean this kindly: you may not need a day off, you may need a different job.`;
+  if (L === 0) a = pick([
+    "Today. You've come to me *on the day*. That's not planning, that's a hostage negotiation. Your options are narrow and they all have to be fast-onset.",
+    "Today. Bold. Everything on the menu has to arrive out of nowhere and need no witnesses. That's a short shelf, but it exists.",
+  ]);
+  else if (L === 1) a = pick([
+    "Tomorrow. Of course it's tomorrow. One night of runway — enough to plant something, not enough to build it.",
+    "Tomorrow. One evening of setup. Enough to mention a headache on the way out; not enough to grow a fever with witnesses.",
+  ]);
+  else if (L <= 4) a = pick([
+    `${L} days out. That's workable. That's an actual runway. You can be visibly unwell before you're absent, which is the whole trick.`,
+    `${L} days of runway. Enough to be seen declining — and being seen declining is what separates the professionals from the Monday-morning texters.`,
+  ]);
+  else if (L <= 10) a = pick([
+    `${L} days. Now you're being professional. At this range you don't have to call in sick at all — you can put something in a calendar and let a system do the lying for you.`,
+    `${L} days. At this distance the calendar does the lying and you never have to say a word out loud. Textbook.`,
+  ]);
+  else a = pick([
+    `${L} days out. You're planning a sick day a fortnight ahead. I mean this kindly: you may not need a day off, you may need a different job.`,
+    `${L} days ahead. Booking an illness like it's an away wedding. I respect the diary work and I worry about the rest of it.`,
+  ]);
 
   let b = "";
-  if (wd === 1) b = " And it's a Monday. Everyone's grandmother dies on a Monday. It's survivable, but it costs you credibility you'll want later.";
-  else if (wd === 5) b = " A Friday. You understand that everyone will assume it's a long weekend, including me, and I'm on your side.";
+  if (wd === 1) b = pick([
+    " And it's a Monday. Everyone's grandmother dies on a Monday. It's survivable, but it costs you credibility you'll want later.",
+    " And a Monday. The most audited day in medicine. Survivable — but you're spending credibility, not earning it.",
+  ]);
+  else if (wd === 5) b = pick([
+    " A Friday. You understand that everyone will assume it's a long weekend, including me, and I'm on your side.",
+    " A Friday. Bold. You'll get the look when you're back — you know the look — but the look isn't evidence.",
+  ]);
   else if (wd === 0 || wd === 6) b = " That's a weekend. I admire the ambition, but nobody needs a note for a Saturday. Pick a working day.";
-  else if (wd === 3) b = " Midweek. Good. Wednesdays are invisible.";
-  else b = " Midweek. Nobody suspects a Tuesday or a Thursday. Sensible.";
+  else if (wd === 3) b = pick([
+    " Midweek. Good. Wednesdays are invisible.",
+    " A Wednesday. Nobody in the history of employment has counted Wednesdays.",
+  ]);
+  else b = pick([
+    " Midweek. Nobody suspects a Tuesday or a Thursday. Sensible.",
+    " Midweek. Quiet water. Nobody audits it.",
+  ]);
   return `${dow(S.dday)}, ${fmtMD(S.dday)}. ${a}${b}`;
 }
 
@@ -728,9 +768,18 @@ function sceneIllness() {
 }
 
 function daysVerdict() {
-  if (S.days === 1) return "One day. That's the cleanest thing you can ask me for — nothing to maintain, nothing for anyone to remember afterwards. Here's what that date supports.";
-  if (S.days === 2) return "Two days. That needs a story that survives a night, which shuts about half the drawer. Here's what's left.";
-  return "The rest of the week. (He stops writing for a moment.) That's not a sick day, that's a small holiday — it needs something that gets *worse* before it gets better, and there aren't many of those. Here's the short list.";
+  if (S.days === 1) return pick([
+    "One day. That's the cleanest thing you can ask me for — nothing to maintain, nothing for anyone to remember afterwards. Here's what that date supports.",
+    "One day. In and out, nothing to maintain on the far side. Here's what the date will carry.",
+  ]);
+  if (S.days === 2) return pick([
+    "Two days. That needs a story that survives a night, which shuts about half the drawer. Here's what's left.",
+    "Two days. Day one is easy — it's the second morning that convicts people, so the story has to sleep soundly. What's left:",
+  ]);
+  return pick([
+    "The rest of the week. (He stops writing for a moment.) That's not a sick day, that's a small holiday — it needs something that gets *worse* before it gets better, and there aren't many of those. Here's the short list.",
+    "Most of a week. (He looks up for the first time.) That needs an illness with a documented arc — arrives, worsens, recovers on schedule. The shortlist is short.",
+  ]);
 }
 
 // Long absence, long runway: nothing in the catalogue arrives slowly enough to be scheduled
@@ -746,14 +795,30 @@ function nothingFits() {
 
 function sceneWork() {
   options([
-    { label:"In an office. People see me.", sub:"Physical performance required.", go:() => { S.work = "office"; sceneBoss(); } },
-    { label:"Remote. Camera on, a lot.", sub:"Your face is the evidence.", go:() => { S.work = "camera"; sceneBoss(); } },
-    { label:"Remote. Mostly messages.", sub:"Easy mode. Timestamps are your only tell.", go:() => { S.work = "async"; sceneBoss(); } },
+    { label:"In an office. People see me.", sub:"Physical performance required.", go:() => { S.work = "office"; sceneSocial(); } },
+    { label:"Remote. Camera on, a lot.", sub:"Your face is the evidence.", go:() => { S.work = "camera"; sceneSocial(); } },
+    { label:"Remote. Mostly messages.", sub:"Easy mode. Timestamps are your only tell.", go:() => { S.work = "async"; sceneSocial(); } },
   ]);
 }
 
+// How much they talk decides how much performing the plan can survive.
+// A quiet person suddenly narrating symptoms is the classic self-inflicted wound.
+function sceneSocial() {
+  say(pick([
+    "Around the office — how much do you talk? Honestly. Oversharing from a quiet person is how most of these unravel.",
+    "Next: are you a talker? The quiet ones and the loud ones get caught differently, and the sheet changes accordingly.",
+  ]), () => options([
+    { label:"Quiet. I keep to myself.", sub:"Two sentences is a rally.", go:() => { S.social = "quiet"; sceneBoss(); } },
+    { label:"Average. Normal amounts of hallway.", sub:"Weather, weekends, whose milk is whose.", go:() => { S.social = "avg"; sceneBoss(); } },
+    { label:"Talkative. I narrate.", sub:"The office knows your dentist's name.", go:() => { S.social = "chatty"; sceneBoss(); } },
+  ]));
+}
+
 function sceneBoss() {
-  say("Last one, and be honest, it changes the dose. Your manager.", () => options([
+  say(pick([
+    "Last one, and be honest, it changes the dose. Your manager.",
+    "Last variable. The manager. Be honest — I calibrate everything to this.",
+  ]), () => options([
     { label:"Relaxed. Barely reads messages.", sub:"", go:() => { S.boss = "chill"; sceneWrite(); } },
     { label:"Watches everything. Notices timestamps.", sub:"", go:() => { S.boss = "hawk"; sceneWrite(); } },
     { label:"Does exactly this themselves.", sub:"", go:() => { S.boss = "peer"; sceneWrite(); } },
@@ -763,9 +828,18 @@ function sceneBoss() {
 // One breath before the paperwork — he reacts to the manager, then writes while he talks.
 function sceneWrite() {
   const opener =
-    S.boss === "hawk" ? "A timestamp-reader. Then we do this properly: everything you send goes out early, slow, and slightly broken. I've built that in." :
-    S.boss === "peer" ? "A fellow practitioner. Then no performance — they can smell acting. Everything on this sheet is calibrated to *less*." :
-    "Barely reads messages. Do you know how rare that is? Don't squander it by over-explaining. One line where two would do.";
+    S.boss === "hawk" ? pick([
+      "A timestamp-reader. Then we do this properly: everything you send goes out early, slow, and slightly broken. I've built that in.",
+      "A timestamp-reader. Fine. Everything goes out early and slightly broken, and nothing goes out twice. The sheet assumes surveillance.",
+    ]) :
+    S.boss === "peer" ? pick([
+      "A fellow practitioner. Then no performance — they can smell acting. Everything on this sheet is calibrated to *less*.",
+      "Takes one to know one. No theatrics on this sheet — a fellow practitioner clocks overacting instantly. We go quiet and boring.",
+    ]) :
+    pick([
+      "Barely reads messages. Do you know how rare that is? Don't squander it by over-explaining. One line where two would do.",
+      "A manager who doesn't read. You've been handed a gift. The sheet keeps everything short so you don't hand it back.",
+    ]);
   say(`${opener}
 
 (He pulls the pad across and writes without looking up.) ${S.ill.name}. ${S.days} day${S.days > 1 ? "s" : ""}, starting ${dow(S.dday)}. The timings are on the sheet, the don'ts are at the bottom, and my name is on none of it.`, () => {
@@ -790,6 +864,8 @@ function plausibility() {
   if (S.days === 3) p -= .12;
   if (S.work === "camera") p -= .05;
   if (S.work === "async") p += .04;
+  if (S.social === "quiet") p += .03;    // nobody expects a briefing from you anyway
+  if (S.social === "chatty") p -= .05;   // you have a track record of narrating
   if (S.boss === "hawk") p -= .08;
   if (S.boss === "peer") p += .06;
   if (S.ill.id === "pinkeye" && S.work === "office") p += .05;
@@ -809,6 +885,12 @@ function extraSteps() {
   if (S.work === "office")
     out.push({ off:1, time:"on arrival", what:"Be seen arriving slightly late",
       script:"", note:"Ten minutes. Not thirty. Thirty is a second story you'd have to maintain." });
+  if (S.social === "quiet")
+    out.push({ off:-1, time:"any time", what:"Skip the out-loud lines",
+      script:"", note:"Any line on this sheet you'd have to say to a room — don't. You never announce symptoms, and starting the day before an absence is the tell. From you, the morning message alone is in character." });
+  if (S.social === "chatty")
+    out.push({ off:0, time:"all day", what:"Resist the group chat",
+      script:"", note:"Your natural volume is the risk. One message to your manager, nothing in the channel, no colour commentary. From you, silence reads as genuinely unwell — let it." });
   if (S.boss === "hawk")
     out.push({ off:-1, time:"22:30", what:"Leave a late-night trace",
       script:"Doing what I can from the sofa. The deck's updated.",
@@ -950,7 +1032,10 @@ function planText() {
 $("#print").onclick = () => window.print();
 $("#again").onclick = () => {
   $("#result").hidden = true; $("#scene").hidden = false;
-  say("Again? Ambitious. When, and for how long?", sceneDateUI);
+  say(pick([
+    "Again? Ambitious. When, and for how long?",
+    "Back already. Either it worked or you didn't use it. When's the next one?",
+  ]), sceneDateUI);
 };
 $("#copy").onclick = e => navigator.clipboard.writeText(planText()).then(() => {
   e.target.textContent = "Copied."; setTimeout(() => e.target.textContent = "Copy plan", 1600);
