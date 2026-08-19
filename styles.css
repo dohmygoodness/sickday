@@ -115,6 +115,7 @@ body.talking .bg .type{opacity:1}
 }
 .ui.grid2 .ui-inner{display:grid; grid-template-columns:1fr 1fr; align-items:stretch}
 .opt{
+  flex:0 0 auto;   /* never squash to fit the tray — overflow scrolls instead */
   counter-increment:opt; position:relative; text-align:left; cursor:pointer;
   font-family:var(--sans); font-size:clamp(14px,1.2vw,16.5px); color:var(--ink);
   background:var(--paper); border:2.5px solid var(--ink); border-radius:3px;
@@ -479,6 +480,7 @@ ul.dont li::before{content:"✕"; position:absolute; left:0; top:1px; font-famil
     bottom:calc(6px + env(safe-area-inset-bottom));
     color:rgba(255,255,255,.85);
   }
+  .disclaimer span{display:block}   /* break after "advice," on phones */
   /* back is just an arrow riding the box's top-right corner */
   .back{top:-16px; bottom:auto; right:10px; padding:6px 12px; font-size:14px; line-height:1}
   .back .bktx{display:none}

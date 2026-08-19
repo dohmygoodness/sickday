@@ -423,7 +423,7 @@ const ILLNESSES = [
     dont:["Don't cough on video calls — a microphone makes every cough sound fake.","Don't be seen running, cycling or carrying anything upstairs for a week.","Don't mention antibiotics. Half your office knows they don't work on this and one of them will say so."]
   },
   {
-    id:"shingles", name:"Shingles", ideal:5, min:3, max:30, risk:0.86, holds:3,
+    id:"shingles", name:"Shingles", ideal:5, min:3, max:30, risk:0.86, holds:3, needs:2,   /* "out for a few days" — can't be a one-day story */
     blurb:"Hurts before it shows. Serious enough that people stop asking questions.",
     dx:"Herpes zoster (shingles)", advice:"Antivirals if within 72h; avoid contact with non-immune persons; rest.",
     doc:"Shingles. It hurts before it shows, which is exactly the shape you want — days of vague nerve pain, then a rash under your clothing that nobody is going to ask to see. It's also serious enough that a decent manager stops asking and a bad one gets nervous.",
@@ -524,7 +524,7 @@ function mountUI(inner, twoCol = false) {
 function options(list) {
   const inner = el("div", "ui-inner");
   list.forEach((o, i) => {
-    const b = el("button", "opt", `<b>${o.label}</b>${o.sub ? `<small>${o.sub}</small>` : ""}`);
+    const b = el("button", "opt", `<b>${o.label}</b>`);   // labels only — the subheads are retired
     b.style.setProperty("--i", i);
     b.onclick = o.go; inner.appendChild(b);
   });
@@ -639,7 +639,7 @@ function sceneDateUI() {
     lbl.innerHTML = `<b>${n} DAY${n > 1 ? "S" : ""}</b><span class="cal-range">` +
       (selB ? `${one(selA)} → ${one(selB)}`
             : selA.toLocaleDateString(undefined, { weekday:"short", month:"short", day:"numeric" }).toUpperCase()) + "</span>";
-    go.textContent = selB ? "Those are the days" : "That's the day";
+    go.textContent = selB ? "These days" : "That's the day";
     durHint.textContent =
       n === 1 ? "One day. Cleanest, cheapest, hardest to catch." :
       n === 2 ? "Two days. Needs a story that survives a night." :
@@ -724,7 +724,8 @@ let lastPool = "";
 function pickPool(n = 4) {
   const fits = ILLNESSES
     .filter(i => S.lead >= i.min && S.lead <= i.max)   // the runway the date allows
-    .filter(i => S.days <= i.holds)                    // and the length the condition can carry
+    .filter(i => S.days <= i.holds)                    // the length the condition can carry
+    .filter(i => S.days >= (i.needs || 1))             // and the length its story insists on
     .sort((a,b) => fitOf(a) - fitOf(b));
   if (fits.length <= n) return fits;
 
