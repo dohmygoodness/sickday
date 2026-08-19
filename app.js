@@ -495,7 +495,7 @@ function say(text, then) {
     node.scrollTop = node.scrollHeight;        // portrait caps .say's height; keep the newest line visible
     if (i >= text.length) { clearInterval(typing); typing = null; node.textContent = text; node.classList.add("done"); document.body.classList.remove("talking"); then && then(); }
   };
-  typing = setInterval(tick, 32);
+  typing = setInterval(tick, 24);
   node.onclick = () => { if (typing) { clearInterval(typing); typing = null; node.textContent = text; node.classList.add("done"); node.scrollTop = node.scrollHeight; document.body.classList.remove("talking"); then && then(); } };
 }
 
@@ -503,9 +503,13 @@ function mountUI(inner, twoCol = false) {
   const ui = $("#ui");
   ui.classList.remove("open");
   ui.classList.toggle("grid2", twoCol);
+  // a real menu reserves room for at least two options on portrait phones
+  ui.classList.toggle("roomy", inner.querySelectorAll(".opt").length >= 2);
   ui.innerHTML = ""; ui.appendChild(inner);
   void ui.offsetHeight;                      // flush layout so the 0fr start applies
   setTimeout(() => ui.classList.add("open"), 20);
+  // the opening tray squeezes a capped monologue over ~.45s — keep its end in view
+  [200, 480, 900].forEach(t => setTimeout(() => { const s = $("#say"); s.scrollTop = s.scrollHeight; }, t));
 }
 
 function options(list) {
@@ -527,9 +531,9 @@ const SMALLTALK = [
   { label:"Is that monitor connected to anything?",
     sub:"The cable just runs off the edge of the desk.",
     reply:"No. It went dark in 2019 and IT have been collecting it 'next quarter' ever since. I kept up the typing — patients trust a doctor they can hear working, and the notes were always going in here anyway. (He taps his temple.)\n\nSix years, and you're the first person to ask. Keep the eye for detail — for the next few days it's going to be your entire immune system." },
-  { label:"Is your name really Hugo Holmes?",
-    sub:"It says Holm on the door.",
-    reply:"Holm. No 'e', no 's', no deerstalker. Holmes worked out who was lying to him — I get told at the door and write it down anyway.\n\nHugo Holm. Say it fast and you'll hear the only prescription this clinic writes." },
+  { label:"Is your name really Hugo Holm?",
+    sub:"It sounds made up.",
+    reply:"It's on the door, the stamp, and the strike-off register if you ever quote me. Four generations of Holms, every one of them a doctor, every one of them heard the joke you're warming up right now.\n\nHugo Holm. Say it fast and you'll hear the only prescription this clinic writes." },
 ];
 let CHAT = 0;
 
