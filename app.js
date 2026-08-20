@@ -113,7 +113,7 @@ const ILLNESSES = [
     dont:["Don't turn your camera on with two clear eyes.","Don't do it twice in one year — pink eye is memorable.","Don't shake anyone's hand for three days after; sell the whole bit."]
   },
   {
-    id:"gastro", name:"Viral gastroenteritis", ideal:2, min:1, max:4, risk:0.84, holds:3,
+    id:"gastro", name:"Viral gastroenteritis", ideal:2, min:1, max:4, risk:0.84, holds:3, needs:2,   /* the 48-hour rule is the engine — can't return next morning */
     blurb:"Contagious, gross, and self-limiting. The polite version of two days off.",
     dx:"Viral gastroenteritis", advice:"Oral rehydration; exclude from workplace 48h after last symptom.",
     doc:"Stomach bug. Same energy as food poisoning but it comes with a rule: forty-eight hours. That rule is doing all the work for you.",
