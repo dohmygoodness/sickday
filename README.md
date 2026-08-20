@@ -5,6 +5,12 @@ resulting paperwork is a single scrolling sheet inside its own panel. You sit ac
 need to be ill and for how long, and he hands you a timeline: what to say three days
 out, what to send at 06:45, and what not to do afterwards.
 
+It opens in the corridor: scrolling scrubs a five-second clip of his door swinging
+open (every frame is a keyframe, so the scroll position *is* the playhead), which ends
+on the same drawing the background gif starts on — the overlay crossfades out and he
+starts talking. Escape or "skip the corridor" jumps straight in; `prefers-reduced-motion`
+skips it entirely.
+
 Static site, no build step. Fonts (Space Grotesk / IBM Plex Mono / Instrument Serif)
 load from Google Fonts; everything else is local.
 
@@ -18,6 +24,9 @@ Then open http://localhost:4321 (or just open `index.html`).
 - `index.html` — markup: full-bleed background, dialogue box, result panel
 - `styles.css` — green/white paper theme; fixed full-viewport layout, nothing scrolls
 - `app.js` — dialogue flow, illness catalogue, plan generator, plausibility scoring
+- `intro.js` — scroll-scrubbed opening; holds the first line until `intro:done`
+- `assets/door-open.mp4` — the door opening, re-encoded all-intra for exact seeks
+- `assets/door-open-poster.jpg` — first frame, shown while the clip buffers
 - `assets/doc-type.gif` — background: the doctor typing (shown while he talks)
 - `assets/doc-blinking.gif` — background: the doctor blinking (shown while he waits for you)
 - `assets/doctor-still.jpg` — still fallback for `prefers-reduced-motion`

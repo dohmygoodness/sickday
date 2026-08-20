@@ -1053,4 +1053,7 @@ addEventListener("keydown", e => {
   }
 });
 
-scene0();
+/* intro.js flags pre-intro before this runs; the first line waits for the door */
+if (document.body.classList.contains("pre-intro"))
+  addEventListener("intro:done", scene0, { once: true });
+else scene0();
