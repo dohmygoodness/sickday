@@ -38,26 +38,28 @@
   function finish() {
     if (done) return;
     done = true;
-    /* the overlay goes pointer-events:none the moment it fades, so leftover
-       wheel/touch momentum from the finishing gesture would land on the page
-       underneath and scroll it — swallow input until the momentum goes quiet */
-    const release = () => {
-      removeEventListener("wheel", swallow);
-      removeEventListener("touchmove", swallow);
-    };
-    let quiet = setTimeout(release, 400);
-    const swallow = e => {
-      e.preventDefault();
-      clearTimeout(quiet);
-      quiet = setTimeout(release, 250);
-    };
+    /* Momentum and follow-up flicks from the gesture that opened the door must
+       not scroll the page underneath. Wheel momentum streams events — cancel
+       them until they stop. Touch flicks arrive as fresh gestures with silent
+       gaps between them, so the faded overlay's scroller stays hit-testable
+       (styles.css) and eats them until input has been quiet for a while. */
+    let last = performance.now();
+    const swallow = e => { if (e.cancelable) e.preventDefault(); last = performance.now(); };
+    const note = () => { last = performance.now(); };
     addEventListener("wheel", swallow, { passive: false });
-    addEventListener("touchmove", swallow, { passive: false });
+    addEventListener("touchmove", note, { passive: true });
     document.body.classList.add("intro-done");     /* overlay fades (styles.css) */
     document.body.classList.remove("pre-intro");   /* consult room comes up behind it */
     dispatchEvent(new Event("intro:done"));        /* app.js: the doctor starts talking */
     removeEventListener("keydown", onKey, true);
-    setTimeout(() => intro.remove(), 800);
+    const born = performance.now();
+    (function reap() {
+      const now = performance.now();
+      if (now - born < 1500 || now - last < 900) return setTimeout(reap, 200);
+      removeEventListener("wheel", swallow);
+      removeEventListener("touchmove", note);
+      intro.remove();
+    })();
   }
 
   (function tick() {
