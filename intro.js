@@ -1,8 +1,9 @@
 /* ── the corridor ──────────────────────────────────────────
-   Scroll-driven opening: a four-screen-tall track with the video
-   pinned; scroll position scrubs the door open. The clip is encoded
-   all-intra (every frame a keyframe) so seeks land exactly, and it's
-   fetched as a blob so scrubbing never waits on a range request.
+   Scroll-driven opening: a five-screen-tall track with the video
+   pinned; three screens of scroll scrub the door open, the rest is
+   slack. The clip is encoded all-intra (every frame a keyframe) so
+   seeks land exactly, and it's fetched as a blob so scrubbing never
+   waits on a range request.
    The last frame is the composition the background gif starts on;
    app.js holds the doctor's first line until `intro:done`. */
 (() => {
@@ -28,8 +29,11 @@
   const unlock = () => { const p = vid.play(); if (p) p.then(() => vid.pause()).catch(() => {}); };
   scroller.addEventListener("touchstart", unlock, { once: true, passive: true });
 
+  /* The door opens over the first three quarters of the track; the last
+     quarter is slack for momentum to die in (styles.css .intro-track). */
+  const DOOR = 0.75;
   const progress = () => {
-    const max = scroller.scrollHeight - scroller.clientHeight;
+    const max = (scroller.scrollHeight - scroller.clientHeight) * DOOR;
     return max > 0 ? Math.min(1, scroller.scrollTop / max) : 0;
   };
 
