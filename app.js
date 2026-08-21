@@ -552,9 +552,20 @@ function smalltalk(q) {
   say(q.reply + clock, menu0);
 }
 
+/* Set once the calendar has been on screen. From then on the opening menu
+   offers a way back to it instead of pretending the visit hasn't started. */
+let SEEN_CAL = false;
+
 function menu0() {
+  $("#back").hidden = true;                      // nothing behind this menu to go back to
   options([
-    { label:"I need a day off.", sub:"Straight to it. He respects that.", go:sceneDate },
+    SEEN_CAL
+      ? { label:"Never mind — let's get back to it.", go:() =>
+          say(pick([
+            "Thank you. The calendar, where we left it. When, and how long?",
+            "Good. Back to the calendar — when, and how long?",
+          ]), sceneDateUI) }
+      : { label:"I need a day off.", sub:"Straight to it. He respects that.", go:sceneDate },
     { label:"…how did you know?", sub:"Nobody healthy books a 4:40pm slot.", go:() =>
       say(pick([
         "Nobody who's actually ill books the last appointment of the day. They come in at nine, sweating, apologising.\n\nYou booked 4:40 and you're wearing shoes you can walk in. When's the day?",
@@ -583,6 +594,7 @@ function sceneDate() {
 }
 
 function sceneDateUI() {
+  SEEN_CAL = true;
   const start = today();
   let selA = S.dday && S.dday >= start ? S.dday : toWorkday(shift(start, 3), 1);   // first day off — kept if he sends you back
   let selB = S.days > 1 ? addWorkdays(selA, S.days - 1) : null;      // last day off
@@ -667,6 +679,12 @@ function sceneDateUI() {
     inner.prepend(cal);                              // mobile: inline as before
     mountUI(inner);
   }
+  /* back to the opening questions, for anyone who skipped the silly ones */
+  $("#back").hidden = false;
+  $("#back").onclick = () => say(pick([
+    "The calendar can wait, apparently. What is it?",
+    "Yes? You're walking away from a calendar. Go on, what?",
+  ]), menu0);
 }
 
 function dateVerdict() {

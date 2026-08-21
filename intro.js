@@ -38,6 +38,21 @@
   function finish() {
     if (done) return;
     done = true;
+    /* the overlay goes pointer-events:none the moment it fades, so leftover
+       wheel/touch momentum from the finishing gesture would land on the page
+       underneath and scroll it — swallow input until the momentum goes quiet */
+    const release = () => {
+      removeEventListener("wheel", swallow);
+      removeEventListener("touchmove", swallow);
+    };
+    let quiet = setTimeout(release, 400);
+    const swallow = e => {
+      e.preventDefault();
+      clearTimeout(quiet);
+      quiet = setTimeout(release, 250);
+    };
+    addEventListener("wheel", swallow, { passive: false });
+    addEventListener("touchmove", swallow, { passive: false });
     document.body.classList.add("intro-done");     /* overlay fades (styles.css) */
     document.body.classList.remove("pre-intro");   /* consult room comes up behind it */
     dispatchEvent(new Event("intro:done"));        /* app.js: the doctor starts talking */

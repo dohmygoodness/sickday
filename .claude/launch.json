@@ -1,6 +1,11 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "sickday", "runtimeExecutable": "sh", "runtimeArgs": ["-c", "python3 -m http.server \"$PORT\""], "autoPort": true }
+    {
+      "name": "sickday",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "python3 -c 'import http.server as h, sys\nclass H(h.SimpleHTTPRequestHandler):\n    def end_headers(self):\n        self.send_header(\"Cache-Control\", \"no-cache\")\n        super().end_headers()\nh.ThreadingHTTPServer((\"\", int(sys.argv[1])), H).serve_forever()' \"$PORT\""],
+      "autoPort": true
+    }
   ]
 }
